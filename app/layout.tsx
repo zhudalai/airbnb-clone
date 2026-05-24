@@ -6,6 +6,7 @@ import "./globals.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import Navbar from "@/components/navbar";
 import Providers from "@/components/Provider";
+import ChatWidget from "@/components/ChatWidget";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -44,6 +45,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <main className="pb-16 md:pt-28 pt-24">{children}</main>
+          <ChatWidget />
         </Providers>
       </body>
       <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID || ""} />
