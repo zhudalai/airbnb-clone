@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       "日本全国の民泊・民宿を簡単に検索・予約。",
   },
   alternates: {
-    canonical: "https://your-app.vercel.app",
+    canonical: "https://airbnb-clone-6fik97c8p-zhu-yanjun-s-projects.vercel.app",
   },
 };
 
