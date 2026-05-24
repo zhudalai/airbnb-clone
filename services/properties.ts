@@ -1,8 +1,11 @@
 "use server";
-import { db } from "@/lib/db";
 import { LISTINGS_BATCH } from "@/utils/constants";
 import { getCurrentUser } from "./user";
 import { revalidatePath } from "next/cache";
+import { mockListings } from "@/data/mockListings";
+
+const useMockDb = !process.env.DATABASE_URL ||
+  process.env.DATABASE_URL.includes("mock:mock");
 
 export const getProperties = async (args?: Record<string, string>) => {
   try {
@@ -11,6 +14,25 @@ export const getProperties = async (args?: Record<string, string>) => {
     if (!userId) {
       throw new Error("Unauthorized");
     }
+
+    if (useMockDb) {
+      const filtered = mockListings.filter((l) => l.userId === userId);
+      const startIndex = cursor
+        ? filtered.findIndex((l) => l.id === cursor) + 1
+        : 0;
+      const properties = filtered.slice(startIndex, startIndex + LISTINGS_BATCH);
+      const nextCursor =
+        startIndex + LISTINGS_BATCH < filtered.length
+          ? properties[properties.length - 1]?.id
+          : null;
+
+      return {
+        listings: properties,
+        nextCursor,
+      };
+    }
+
+    const { db } = await import("@/lib/db");
     const filterQuery: any = {
       where: {
         userId,
@@ -57,12 +79,18 @@ export const deleteProperty = async (listingId: string) => {
       throw new Error("Invalid ID");
     }
 
-    await db.listing.deleteMany({
-      where: {
-        id: listingId,
-        userId: currentUser.id,
-      },
-    });
+    if (useMockDb) {
+      const idx = mockListings.findIndex((l) => l.id === listingId && l.userId === currentUser.id);
+      if (idx !== -1) mockListings.splice(idx, 1);
+    } else {
+      const { db } = await import("@/lib/db");
+      await db.listing.deleteMany({
+        where: {
+          id: listingId,
+          userId: currentUser.id,
+        },
+      });
+    }
 
     revalidatePath("/");
     revalidatePath("/reservation");

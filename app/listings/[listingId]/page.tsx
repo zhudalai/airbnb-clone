@@ -33,40 +33,82 @@ const ListingPage = async ({ params: { listingId } }: { params: IParams }) => {
     bathroomCount,
     latlng,
     reservations,
-  } = listing;
+  } = listing as any;
 
   const category = categories.find((cate) => cate.label === listing.category);
 
-  return (
-    <section className="main-container">
-      <div className="flex flex-col gap-6">
-        <ListingHead
-          title={title}
-          image={imageSrc}
-          country={country}
-          region={region}
-          id={id}
-        />
-      </div>
+  // Schema.org LodgingReservation + Place structured data
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: title,
+    description: description,
+    image: imageSrc,
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: region || "",
+      addressCountry: "JP",
+    },
+    ...(latlng && latlng.length === 2
+      ? {
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: latlng[0],
+            longitude: latlng[1],
+          },
+        }
+      : {}),
+    ...(price
+      ? {
+          priceRange: `¥${price.toLocaleString()}/night`,
+        }
+      : {}),
+    ...(owner?.name
+      ? {
+          employee: {
+            "@type": "Person",
+            name: owner.name,
+          },
+        }
+      : {}),
+  };
 
-      <ListingClient
-        id={id}
-        price={price}
-        reservations={reservations}
-        user={currentUser}
-        title={title}
-      >
-        <ListingInfo
-          user={owner}
-          category={category}
-          description={description}
-          roomCount={roomCount}
-          guestCount={guestCount}
-          bathroomCount={bathroomCount}
-          latlng={latlng}
-        />
-      </ListingClient>
-    </section>
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      />
+      <section className="main-container">
+        <div className="flex flex-col gap-6">
+          <ListingHead
+            title={title}
+            image={imageSrc}
+            country={country}
+            region={region}
+            id={id}
+          />
+        </div>
+
+        <ListingClient
+          id={id}
+          price={price}
+          reservations={reservations}
+          user={currentUser}
+          title={title}
+        >
+          <ListingInfo
+            user={owner}
+            category={category}
+            description={description}
+            roomCount={roomCount}
+            guestCount={guestCount}
+            bathroomCount={bathroomCount}
+            latlng={latlng}
+          />
+        </ListingClient>
+      </section>
+    </>
   );
 };
 

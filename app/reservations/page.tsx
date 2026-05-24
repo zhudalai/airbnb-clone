@@ -13,7 +13,7 @@ const ReservationPage = async () => {
   const user = await getCurrentUser();
   const favorites = await getFavorites();
 
-  if (!user) return <EmptyState title="Unauthorized" subtitle="Please login" />;
+  if (!user) return <EmptyState title="未ログイン" subtitle="ログインしてください" />;
 
   const { listings, nextCursor } = await getReservations({
     userId: user.id,
@@ -22,16 +22,16 @@ const ReservationPage = async () => {
   if (listings.length === 0)
     return (
       <EmptyState
-        title="No reservations found"
-        subtitle="Looks like you have no reservations on your properties."
+        title="予約がありません"
+        subtitle="物件に予約はありません。"
       />
     );
 
   return (
     <section className="main-container">
-      <Heading title="Reservations" subtitle="Bookings on your properties" backBtn/>
+      <Heading title="予約管理" subtitle="物件の予約一覧" backBtn/>
       <div className=" mt-8 md:mt-10 grid  grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
-        {listings.map((listing) => {
+        {listings.map((listing: any) => {
           const { reservation, ...data } = listing;
           const hasFavorited = favorites.includes(listing.id);
           return (

@@ -35,16 +35,16 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
     <div className="col-span-4 flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <div className="text-[16px] font-semibold flex flex-row items-center gap-2">
-          <span className="mr-1">Hosted by</span> <Avatar src={user?.image} />
+          <span className="mr-1">ホスト：</span> <Avatar src={user?.image} />
           <span> {user?.name}</span>
         </div>
         <div
           className="flex flex-row items-center gap-4 font-light text-neutral-700
           "
         >
-          <span>{guestCount} guests</span>
-          <span>{roomCount} rooms</span>
-          <span>{bathroomCount} bathrooms</span>
+          <span>ゲスト{guestCount}人</span>
+          <span>{roomCount}部屋</span>
+          <span>バスルーム{bathroomCount}</span>
         </div>
       </div>
       <hr />

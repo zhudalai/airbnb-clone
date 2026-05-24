@@ -1,22 +1,13 @@
 import bcrypt from "bcrypt";
 import { AuthOptions } from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import { db } from "./db";
+
+const useMockDb = !process.env.DATABASE_URL ||
+  process.env.DATABASE_URL.includes("mock:mock");
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(db),
+  adapter: undefined as any,
   providers: [
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -32,6 +23,11 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        if (useMockDb) {
+          throw new Error("Mock mode — auth disabled");
+        }
+
+        const { db } = await import("./db");
         const user = await db.user.findUnique({
           where: {
             email: credentials.email,

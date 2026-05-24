@@ -10,9 +10,27 @@ import Providers from "@/components/Provider";
 const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VacationHub",
+  title: "民泊マーケティング - 日本全国の民宿・民泊を検索",
   description:
-    "Your Ultimate Destination Connection. Discover a world of endless possibilities and seamless vacation planning at VacationHub.",
+    "日本全国の民泊・民宿を簡単に検索・予約。AI が最適な物件をご提案します。東京、大阪、京都、北海道、沖縄、福岡など、人気エリアの民泊物件を掲載。",
+  openGraph: {
+    type: "website",
+    locale: "ja_JP",
+    siteName: "民泊マーケティング",
+    title: "民泊マーケティング - 日本全国の民宿・民泊を検索",
+    description:
+      "日本全国の民泊・民宿を簡単に検索・予約。AI が最適な物件をご提案します。",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@minpaku_jp",
+    title: "民泊マーケティング - 日本全国の民宿・民泊を検索",
+    description:
+      "日本全国の民泊・民宿を簡単に検索・予約。",
+  },
+  alternates: {
+    canonical: "https://your-app.vercel.app",
+  },
 };
 
 export default function RootLayout({
@@ -21,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body className={nunito.className}>
         <Providers>
           <Navbar />

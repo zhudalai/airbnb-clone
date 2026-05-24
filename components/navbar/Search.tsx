@@ -30,13 +30,13 @@ const Search = () => {
         diff = 1;
       }
 
-      return `${diff} Days`;
+      return `${diff}泊`;
     }
 
-    return "Any week";
+    return "いつでも";
   }, [endDate, startDate]);
 
-  const guestLabel = guestCount ? `${guestCount} Guests` : "Add Guests";
+  const guestLabel = guestCount ? `${guestCount}人` : "ゲストを追加";
 
   return (
     <Modal>
@@ -47,7 +47,7 @@ const Search = () => {
         >
           <div className="flex flex-row justify-between items-center">
             <small className="text-sm font-bold px-6 text-[#585858]">
-              {country ? country : "Anywhere"}
+              {country ? country : "どこでも"}
             </small>
 
             <small className="hidden sm:block text-sm font-bold px-6 border-x-[1px] flex-1 text-center text-[#585858]">

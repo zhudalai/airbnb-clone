@@ -2,15 +2,72 @@
 import { revalidatePath } from "next/cache";
 import { Listing, Reservation } from "@prisma/client";
 
-import { db } from "@/lib/db";
 import { LISTINGS_BATCH } from "@/utils/constants";
 import { getCurrentUser } from "./user";
 import { stripe } from "@/lib/stripe";
+import { mockListings } from "@/data/mockListings";
 
-export const getReservations = async (args: Record<string, string>) => {
+const useMockDb = !process.env.DATABASE_URL ||
+  process.env.DATABASE_URL.includes("mock:mock");
+
+// In-memory reservations store for mock mode
+const mockReservations: Array<{ id: string; userId: string; listingId: string; startDate: Date; endDate: Date; totalPrice: number; createdAt: Date }> = [];
+
+export const getReservations = async (args: Record<string, string>): Promise<{ listings: any[]; nextCursor: string | null }> => {
   try {
     const { listingId, userId, authorId, cursor } = args;
 
+    if (useMockDb) {
+      let filtered = [...mockReservations];
+
+      if (userId) {
+        filtered = filtered.filter((r) => r.userId === userId);
+      }
+      if (listingId) {
+        filtered = filtered.filter((r) => r.listingId === listingId);
+      }
+      if (authorId) {
+        filtered = filtered.filter((r) => {
+          const listing = mockListings.find((l) => l.id === r.listingId);
+          return listing?.userId === authorId;
+        });
+      }
+
+      filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+      const startIndex = cursor
+        ? filtered.findIndex((r) => r.id === cursor) + 1
+        : 0;
+      const reservations = filtered.slice(startIndex, startIndex + LISTINGS_BATCH);
+
+      const nextCursor =
+        startIndex + LISTINGS_BATCH < filtered.length
+          ? reservations[reservations.length - 1]?.id
+          : null;
+
+      const listings: any[] = [];
+      for (const reservation of reservations) {
+        const listing = mockListings.find((l) => l.id === reservation.listingId);
+        if (listing) {
+          listings.push({
+            ...listing,
+            reservation: {
+              id: reservation.id,
+              startDate: reservation.startDate,
+              endDate: reservation.endDate,
+              totalPrice: reservation.totalPrice,
+            },
+          });
+        }
+      }
+
+      return {
+        listings,
+        nextCursor,
+      };
+    }
+
+    const { db } = await import("@/lib/db");
     const where: any = {};
 
     if (userId) {
@@ -87,21 +144,34 @@ export const createReservation = async ({
     if (!listingId || !startDate || !endDate || !totalPrice)
       throw new Error("Invalid data");
 
-    await db.listing.update({
-      where: {
-        id: listingId,
-      },
-      data: {
-        reservations: {
-          create: {
-            userId,
-            startDate,
-            endDate,
-            totalPrice,
+    if (useMockDb) {
+      mockReservations.push({
+        id: `mock-reservation-${Date.now()}`,
+        userId,
+        listingId,
+        startDate,
+        endDate,
+        totalPrice,
+        createdAt: new Date(),
+      });
+    } else {
+      const { db } = await import("@/lib/db");
+      await db.listing.update({
+        where: {
+          id: listingId,
+        },
+        data: {
+          reservations: {
+            create: {
+              userId,
+              startDate,
+              endDate,
+              totalPrice,
+            },
           },
         },
-      },
-    });
+      });
+    }
 
     revalidatePath(`/listings/${listingId}`);
   } catch (error: any) {
@@ -121,32 +191,43 @@ export const deleteReservation = async (reservationId: string) => {
       throw new Error("Invalid ID");
     }
 
+    let listingId = "";
 
-    const reservation = await db.reservation.findUnique({
-      where: {
-        id: reservationId,
+    if (useMockDb) {
+      const idx = mockReservations.findIndex((r) => r.id === reservationId);
+      if (idx === -1) throw new Error("Reservation not found!");
+      listingId = mockReservations[idx].listingId;
+      mockReservations.splice(idx, 1);
+    } else {
+      const { db } = await import("@/lib/db");
+      const reservation = await db.reservation.findUnique({
+        where: {
+          id: reservationId,
+        }
+      });
+
+      if (!reservation) {
+        throw new Error("Reservation not found!");
       }
-    });
 
-    if (!reservation) {
-      throw new Error("Reservation not found!");
+      listingId = reservation.listingId;
+
+      await db.reservation.deleteMany({
+        where: {
+          id: reservationId,
+          OR: [
+            { userId: currentUser.id },
+            { listing: { userId: currentUser.id } },
+          ],
+        },
+      });
     }
 
-    await db.reservation.deleteMany({
-      where: {
-        id: reservationId,
-        OR: [
-          { userId: currentUser.id },
-          { listing: { userId: currentUser.id } },
-        ],
-      },
-    });
-
     revalidatePath("/reservations");
-    revalidatePath(`/listings/${reservation.listingId}`);
+    revalidatePath(`/listings/${listingId}`);
     revalidatePath("/trips");
 
-    return reservation;
+    return { id: reservationId, listingId };
   } catch (error: any) {
     throw new Error(error.message)
   }
@@ -167,6 +248,27 @@ export const createPaymentSession = async ({
   if (!listingId || !startDate || !endDate || !totalPrice)
     throw new Error("Invalid data");
 
+  if (useMockDb) {
+    const listing = mockListings.find((l) => l.id === listingId);
+    if (!listing) throw new Error("Listing not found!");
+    const user = await getCurrentUser();
+    if (!user) throw new Error("Please log in to reserve!");
+    // In mock mode, simulate reservation and redirect to trips
+    mockReservations.push({
+      id: `mock-reservation-${Date.now()}`,
+      userId: user.id,
+      listingId,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      totalPrice,
+      createdAt: new Date(),
+    });
+    revalidatePath(`/listings/${listingId}`);
+    revalidatePath("/trips");
+    return { url: "/trips" };
+  }
+
+  const { db } = await import("@/lib/db");
   const listing = await db.listing.findUnique({
     where: {id: listingId}
   })

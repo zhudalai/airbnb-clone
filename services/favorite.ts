@@ -1,14 +1,26 @@
 "use server";
 
-import { db } from "@/lib/db";
 import { getCurrentUser } from "./user";
 import { revalidatePath } from "next/cache";
+import { mockListings } from "@/data/mockListings";
+
+const useMockDb = !process.env.DATABASE_URL ||
+  process.env.DATABASE_URL.includes("mock:mock");
+
+// In-memory favorites store for mock mode
+let mockFavorites: string[] = [];
 
 export const getFavorites = async () => {
   try {
     const user = await getCurrentUser();
 
     if (!user) return [];
+
+    if (useMockDb) {
+      return mockFavorites;
+    }
+
+    const { db } = await import("@/lib/db");
     const data = await db.user.findUnique({
       where: {
         id: user.id,
@@ -58,14 +70,19 @@ export const updateFavorite = async ({
       hasFavorited = true;
     }
 
-    await db.user.update({
-      where: {
-        id: currentUser.id,
-      },
-      data: {
-        favoriteIds: newFavorites,
-      },
-    });
+    if (useMockDb) {
+      mockFavorites = newFavorites;
+    } else {
+      const { db } = await import("@/lib/db");
+      await db.user.update({
+        where: {
+          id: currentUser.id,
+        },
+        data: {
+          favoriteIds: newFavorites,
+        },
+      });
+    }
 
     revalidatePath("/");
     revalidatePath(`/listings/${listingId}`);
@@ -82,6 +99,12 @@ export const updateFavorite = async ({
 export const getFavoriteListings = async () => {
   try {
     const favoriteIds = await getFavorites();
+
+    if (useMockDb) {
+      return mockListings.filter((l) => favoriteIds.includes(l.id));
+    }
+
+    const { db } = await import("@/lib/db");
     const favorites = await db.listing.findMany({
       where: {
         id: {

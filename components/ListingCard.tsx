@@ -8,6 +8,7 @@ import HeartButton from "./HeartButton";
 import Image from "./Image";
 import { formatPrice } from "@/utils/helper";
 import ListingMenu from "./ListingMenu";
+import { t } from "@/lib/i18n";
 
 interface ListingCardProps {
   data: Listing;
@@ -72,9 +73,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
           <div className="flex flex-row items-baseline gap-1">
             <span className="font-bold text-[#444] text-[14px]">
-              $ {formatPrice(price)}
+              ¥{formatPrice(price)}
             </span>
-            {!reservation && <span className="font-light">night</span>}
+            {!reservation && <span className="font-light">{t("listing.perNight")}</span>}
           </div>
         </div>
       </Link>

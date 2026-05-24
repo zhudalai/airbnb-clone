@@ -12,6 +12,7 @@ interface CategoryBoxProps extends Category {
 const CategoryBox: React.FC<CategoryBoxProps> = ({
   icon: Icon,
   label,
+  labelJa,
   selected,
 }) => {
   const router = useRouter();
@@ -52,7 +53,7 @@ const CategoryBox: React.FC<CategoryBoxProps> = ({
           : "border-transparent text-neutral-500"}`}
     >
       <Icon  />
-      <small className="font-medium md:text-[13.75px] text-[12.75px] select-none">{label}</small>
+      <small className="font-medium md:text-[13.75px] text-[12.75px] select-none">{labelJa || label}</small>
     </button>
   );
 };

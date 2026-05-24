@@ -1,15 +1,17 @@
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
-import { stripe } from '@/lib/stripe'
-import { createReservation } from '@/services/reservation'
-
 
 export async function POST(req: Request) {
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ ok: true, message: "Stripe not configured" })
+    }
+
+    const { stripe } = await import('@/lib/stripe')
+    const { createReservation } = await import('@/services/reservation')
+
     const body = await req.text()
     const signature = headers().get('stripe-signature');
-
 
     if (!signature) {
       return new Response('Invalid signature', { status: 400 })
@@ -26,25 +28,25 @@ export async function POST(req: Request) {
         throw new Error('Missing user email')
       }
 
-      const session = event.data.object as Stripe.Checkout.Session
-
-      const { listingId,
-        startDate,
-        endDate,
-        totalPrice, userId} = session.metadata || {};
+      const session = event.data.object as any
+      const { listingId, startDate, endDate, totalPrice, userId } = session.metadata || {};
 
       if (!listingId || !startDate || !endDate || !totalPrice || !userId) {
         throw new Error('Invalid request metadata')
       }
 
-      await createReservation({listingId, startDate: new Date(startDate), endDate: new Date(endDate), totalPrice: Number(totalPrice), userId})
-
+      await createReservation({
+        listingId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        totalPrice: Number(totalPrice),
+        userId,
+      })
     }
 
     return NextResponse.json({ result: event, ok: true })
   } catch (err) {
     console.error(err)
-
     return NextResponse.json(
       { message: 'Something went wrong', ok: false },
       { status: 500 }

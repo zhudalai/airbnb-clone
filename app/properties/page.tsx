@@ -14,7 +14,7 @@ const PropertiesPage = async () => {
   const favorites = await getFavorites();
 
   if (!user) {
-    return <EmptyState title="Unauthorized" subtitle="Please login" />;
+    return <EmptyState title="未ログイン" subtitle="ログインしてください" />;
   }
 
   const { listings, nextCursor } = await getProperties({ userId: user.id });
@@ -22,15 +22,15 @@ const PropertiesPage = async () => {
   if (!listings || listings.length === 0) {
     return (
       <EmptyState
-        title="No properties found"
-        subtitle="Looks like you have no properties."
+        title="物件がありません"
+        subtitle="登録された物件はありません。"
       />
     );
   }
 
   return (
     <section className="main-container">
-      <Heading title="Properties" subtitle="List of your properties" backBtn/>
+      <Heading title="物件管理" subtitle="登録した物件一覧" backBtn/>
       <div className=" mt-8 md:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
         {listings.map((listing) => {
           const hasFavorited = favorites.includes(listing.id);

@@ -108,11 +108,11 @@ const AuthModal = ({
         onSubmit={handleSubmit(onSubmit)}
       >
         <Heading
-          title={!isLoginModal ? "Welcome to Airbnb" : "Welcome back"}
+          title={!isLoginModal ? "ようこそ" : "おかえりなさい"}
           subtitle={
             title === "Sign up"
-              ? "Create an account!"
-              : "Login to your account!"
+              ? "新規アカウントを作成"
+              : "アカウントにログイン"
           }
         />
 
@@ -164,7 +164,7 @@ const AuthModal = ({
           className="flex flex-row justify-center gap-2 items-center px-3 py-2"
         >
           <FcGoogle className="w-6 h-6" />
-          <span className="text-[14px]">Continue with Google</span>
+          <span className="text-[14px]">Googleで続ける</span>
         </Button>
         <Button
           outline
@@ -172,7 +172,7 @@ const AuthModal = ({
           className="flex flex-row justify-center gap-2 items-center px-3 py-2"
         >
           <AiFillGithub className="w-6 h-6" />
-          <span className="text-[14px]">Continue with Github</span>
+          <span className="text-[14px]">Githubで続ける</span>
         </Button>
         <div
           className="
@@ -185,8 +185,8 @@ const AuthModal = ({
           <div className="text-[15px]">
             <small className="text-[15px]">
               {!isLoginModal
-                ? "Already have an account?"
-                : "First time using Airbnb?"}
+                ? "アカウントをお持ちですか？"
+                : "初めてのご利用ですか？"}
             </small>
             <button
               type="button"
@@ -199,7 +199,7 @@ const AuthModal = ({
               font-medium
               "
             >
-              {!isLoginModal ? "Log in" : "Create an account"}
+              {!isLoginModal ? "ログイン" : "新規登録"}
             </button>
           </div>
         </div>
