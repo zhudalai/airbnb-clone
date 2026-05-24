@@ -4,6 +4,12 @@ from pydantic import BaseModel
 import httpx
 import os
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 app = FastAPI(title="民泊AI客服", version="1.0.0")
 
 app.add_middleware(

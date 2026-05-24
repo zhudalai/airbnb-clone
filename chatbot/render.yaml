@@ -8,5 +8,3 @@ services:
     envVars:
       - key: OPENROUTER_API_KEY
         sync: false
-      - key: PORT
-        value: "8000"
