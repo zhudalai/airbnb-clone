@@ -1,91 +1,158 @@
-# Airbnb Clone
+# 民泊マーケティング | Minpaku Marketing
 
-This is an Airbnb clone built with Next.js, TypeScript, Tailwind CSS, MongoDB, Prisma, Next auth, Leaflet and many other technologies.
+[English](#english) | [中文](#中文) | [日本語](#日本語)
 
-## Features
+---
 
-- User registration and authentication
-- Property listing and browsing
-- Property booking and reservations
-- Search and filtering of properties
-- Interactive map using Leaflet to display property locations
+## English
 
-## Demo
+An AI-powered Japanese minpaku (vacation rental) marketing platform, forked from [airbnb-clone](https://github.com/sudeepmahato16/airbnb_clone) and redesigned for the Japanese market.
 
-You can check out a live demo of the Airbnb clone project [here](https://airbnb-clone-phi-green.vercel.app/).
+### 🚀 Live Demo
 
-## Screenshots
+**https://airbnb-clone-6fik97c8p-zhu-yanjun-s-projects.vercel.app**
 
-<kbd><img width="944" alt="vacationhub" src="https://github.com/sudeepmahato16/airbnb_clone/assets/122378993/f893e203-8a2d-4ff1-ae20-67e64187b770"></kbd>
+### ✨ What's New (Fork Enhancements)
 
-<kbd><img width="886" alt="login-modal" src="https://github.com/sudeepmahato16/airbnb_clone/assets/122378993/3d6675e0-6046-48dc-b55f-7ef318581ccd"></kbd>
+- **Japanese Localization** — Full i18n: navigation, 15 categories, pricing (¥/night), search, footer
+- **SEO / LLMO Optimization** — Complete meta tags (title, description, Open Graph, Twitter Cards, canonical), `lang="ja"`, `llms.txt` for AI search engines
+- **Schema.org Structured Data** — `LodgingBusiness` type on listing detail pages
+- **AI Customer Support** — FastAPI + OpenRouter chatbot with 8-entry Japanese FAQ knowledge base, floating ChatWidget
+- **GEO Audit Report** — Automated audit via Claude Code, score: **A-**
 
-<kbd><img width="810" alt="listing" src="https://github.com/sudeepmahato16/airbnb_clone/assets/122378993/a0b05a50-cbc2-40db-8f62-6cc203a7c887"></kbd>
+### 🛠 Tech Stack
 
-## Prerequisites
+Next.js 14 · TypeScript · Tailwind CSS · FastAPI · OpenRouter · Prisma · Leaflet · Vercel
 
-Make sure you have the following software installed on your system:
+### 📋 Prerequisites
 
-- git If you want to clone the project from GitHub and work with it locally, you will need to have Git installed on your system. You can download and install Git from the official website (https://git-scm.com/).
+- [Node.js](https://nodejs.org/) (v18+)
+- [Git](https://git-scm.com/)
 
-- Node.js Application requires Node.js to be installed on your system in order to run. You can download and install the latest version of Node.js from the official website (https://nodejs.org/).
+### 🚦 Quick Start
 
-## Installation
+```bash
+git clone https://github.com/zhudalai/airbnb-clone.git
+cd airbnb-clone/Airbnb
+npm install
+# Create .env.local (see below)
+npm run dev
+# Open http://localhost:3000
+```
 
-- Clone the repository:
+### Environment Variables
 
-  ```
-  git clone https://github.com/sudeepmahato16/airbnb_clone.git
-  ```
+```
+DATABASE_URL=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/minpaku
+NEXTAUTH_SECRET=your-secret-key
+```
 
-- Navigate to the project directory:
+> MongoDB is optional for demo. The app works with mock data.
 
-  ```
-  cd Airbnb
-  ```
+---
 
-- Install the dependencies:
+## 中文
 
-  ```
-  npm install
-  ```
+一个面向日本民泊（民宿）市场的 AI 营销平台，基于 [airbnb-clone](https://github.com/sudeepmahato16/airbnb_clone) 二次开发，专为日本市场定制。
 
-- Set up the environment variables:
+### 🚀 线上演示
 
-  1.  Create a `.env.local` file in the root directory.
+**https://airbnb-clone-6fik97c8p-zhu-yanjun-s-projects.vercel.app**
 
-  2.  Add the following variables to the .env file, replacing the placeholder values with your own:
+### ✨ 新增功能（二次开发）
 
-      ```
-      DATABASE_URL=<your-mongodb-uri>
-      GITHUB_CLIENT_ID=<your-github-client-id>
-      GITHUB_CLIENT_SECRET=<your-github-client-secret>
-      GOOGLE_CLIENT_ID=<your-google-client-id>
-      GOOGLE_CLIENT_SECRET=<your-google-client-secret>
-      NEXTAUTH_SECRET=<your-nextauth-secret>
-      EDGE_STORE_ACCESS_KEY=<your-edge-store-access-key>
-      EDGE_STORE_SECRET_KEY=<your-edge-store-secret-key>
-      ```
+- **日语本地化** — 完整国际化：导航栏、15 个分类、价格单位（¥/泊）、搜索、页脚全部日文化
+- **SEO / LLMO 优化** — 完整 meta 标签（title/description/OG/Twitter/canonical）、`lang="ja"`、面向 AI 搜索引擎的 `llms.txt`
+- **Schema.org 结构化数据** — 房源详情页 `LodgingBusiness` 类型标记
+- **AI 客服** — FastAPI + OpenRouter 聊天机器人，含 8 条日语 FAQ 知识库，前端浮动 ChatWidget
+- **GEO 审计报告** — 由 Claude Code 自动生成，评分 **A-**
 
-  ```
+### 🛠 技术栈
 
-  ```
+Next.js 14 · TypeScript · Tailwind CSS · FastAPI · OpenRouter · Prisma · Leaflet · Vercel
 
-## Usage
+### 📋 环境要求
 
-- Start the development server:
+- [Node.js](https://nodejs.org/) (v18+)
+- [Git](https://git-scm.com/)
 
-  ```
-  npm run dev
-  ```
+### 🚦 快速开始
 
-- Open your browser and visit `http://localhost:3000` to access the application.
+```bash
+git clone https://github.com/zhudalai/airbnb-clone.git
+cd airbnb-clone/Airbnb
+npm install
+# 创建 .env.local（见下方）
+npm run dev
+# 打开 http://localhost:3000
+```
 
-## Contributing
+### 环境变量
 
-Contributions are welcome! If you want to contribute to this project, please follow these steps:
+```
+DATABASE_URL=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/minpaku
+NEXTAUTH_SECRET=your-secret-key
+```
 
-- Fork the repository.
-- Create a new branch for your feature or bug fix.
-- Commit your changes to the new branch.
-- Open a pull request back to the main repository, including a description of your changes.
+> MongoDB 是可选的。使用 mock data 即可运行。
+
+---
+
+## 日本語
+
+AI を活用した日本の民泊マーケティングプラットフォーム。[airbnb-clone](https://github.com/sudeepmahato16/airbnb_clone) をフォークし、日本市場向けにリデザインしました。
+
+### 🚀 ライブデモ
+
+**https://airbnb-clone-6fik97c8p-zhu-yanjun-s-projects.vercel.app**
+
+### ✨ 新機能（フォークによる改良）
+
+- **日本語ローカライゼーション** — ナビゲーション、15 カテゴリ、料金単位（¥/泊）、検索、フッターの完全日文化
+- **SEO / LLMO 最適化** — 完全な meta タグ（title/description/OG/Twitter/canonical）、`lang="ja"`、AI 検索エンジン向け `llms.txt`
+- **Schema.org 構造化データ** — 物件詳細ページに `LodgingBusiness` タイプを追加
+- **AI カスタマーサポート** — FastAPI + OpenRouter チャットボット、8 件の日本語 FAQ 知識ベース、フローティング ChatWidget
+- **GEO 監査レポート** — Claude Code による自動監査、評価 **A-**
+
+### 🛠 テックスタック
+
+Next.js 14 · TypeScript · Tailwind CSS · FastAPI · OpenRouter · Prisma · Leaflet · Vercel
+
+### 📋 必要条件
+
+- [Node.js](https://nodejs.org/) (v18+)
+- [Git](https://git-scm.com/)
+
+### 🚦 クイックスタート
+
+```bash
+git clone https://github.com/zhudalai/airbnb_clone.git
+cd airbnb_clone/Airbnb
+npm install
+# .env.local を作成（下記参照）
+npm run dev
+# http://localhost:3000 にアクセス
+```
+
+### 環境変数
+
+```
+DATABASE_URL=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/minpaku
+NEXTAUTH_SECRET=your-secret-key
+```
+
+> MongoDB は任意です。モックデータで動作します。
+
+---
+
+## Contributing / 贡献 / コントリビュート
+
+Contributions are welcome! Fork the repo, create a branch, and open a PR.
+
+コントリビュート歓迎です！リポジトリをフォークし、ブランチを作成して PR を開いてください。
+
+貢献を歓迎します。リポジトリをフォークし、ブランチを作成し、プルリクエストを開いてください。
+
+---
+
+*Built with ❤️ and [Claude Code](https://claude.ai/code)*
